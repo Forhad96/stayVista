@@ -5,26 +5,20 @@ import Calender from "./Calender";
 import { useEffect, useState } from 'react'
 
 const RoomReservation = ({ room }) => {
-    const [value, setValue] = useState({})
+  const [value, setValue] = useState({
+    startDate: new Date(room?.from),
+    endDate: new Date(room?.to),
+    key: "selection",
+  });
 
-
-
-
-    useEffect(()=>{
-      setValue({
-        startDate: new Date(room?.from),
-        endDate: new Date(room?.to),
-        key: "selection",
-      });
-    },[room])
   //   Total days * price
-    // const totalDays = parseInt(
-    //   formatDistance(new Date(), new Date()).split(' ')[0]
-    // )
+  const totalDays = parseInt(
+    formatDistance(new Date(room?.to), new Date(room?.from)).split(" ")[0]
+  );
   // Total Price Calculation
-  //   const totalPrice = totalDays * room?.price
+  const totalPrice = totalDays * room?.price;
 
-    console.log(value)
+  console.log(totalPrice);
 
   return (
     <div className="rounded-xl border-[1px] border-neutral-200 overflow-hidden bg-white">
@@ -43,7 +37,7 @@ const RoomReservation = ({ room }) => {
       <hr />
       <div className="p-4 flex items-center justify-between font-semibold text-lg">
         <div>Total</div>
-        <div>$ {room?.price}</div>
+        <div>$ {totalPrice}</div>
       </div>
     </div>
   );
