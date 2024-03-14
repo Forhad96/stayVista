@@ -101,18 +101,34 @@ async function run() {
       }
     });
 
-//Get rooms for host
-app.get('/rooms/:email',async(req,res)=>{
-   try {
-     const result = await roomsCollection.find({
-       "host.email": req.params.email
-     }).toArray();
-     res.send(result);
-   } catch (err) {
-     console.log(err);
-     res.send(err.message);
-   }
-})
+    //Get rooms for host
+    app.get("/rooms/:email", async (req, res) => {
+      try {
+        const result = await roomsCollection
+          .find({
+            "host.email": req.params.email,
+          })
+          .toArray();
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+        res.send(err.message);
+      }
+    });
+
+    // Get user Role
+    app.get('/user/:email',async(req,res)=>{
+            try {
+              const result = await usersCollection
+                .findOne({
+                  email: req.params.email,
+                });
+              res.send(result);
+            } catch (err) {
+              console.log(err);
+              res.send(err.message);
+            }
+    });
 
     //post new room
     app.post("/rooms", verifyToken, async (req, res) => {
@@ -126,9 +142,6 @@ app.get('/rooms/:email',async(req,res)=>{
         res.send(err.message);
       }
     });
-
-
-
 
     // Save or modify user email, status in DB
     app.put("/users/:email", async (req, res) => {
