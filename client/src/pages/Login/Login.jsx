@@ -3,6 +3,7 @@ import { FcGoogle } from 'react-icons/fc'
 import toast from 'react-hot-toast';
 import { getToken, saveUser } from '../../api/auth';
 import useAuth from '../../hooks/useAuth';
+import { TbFidgetSpinner } from 'react-icons/tb';
 
 const Login = () => {
     const { signIn, signInWithGoogle, loading } = useAuth();
@@ -60,6 +61,7 @@ const Login = () => {
           </p>
         </div>
         <form
+          onSubmit={handleSubmit}
           noValidate=""
           action=""
           className="space-y-6 ng-untouched ng-pristine ng-valid"
@@ -102,7 +104,11 @@ const Login = () => {
               type="submit"
               className="bg-rose-500 w-full rounded-md py-3 text-white"
             >
-              Continue
+              {loading ? (
+                <TbFidgetSpinner className="animate-spin m-auto" />
+              ) : (
+                "Continue"
+              )}
             </button>
           </div>
         </form>

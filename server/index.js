@@ -91,7 +91,6 @@ async function run() {
     //Get single room by id
     app.get("/room/:id", async (req, res) => {
       try {
-        console.log("line 94",req.params.id);
         const result = await roomsCollection.findOne({
           _id: new ObjectId(req.params.id),
         });
@@ -102,8 +101,21 @@ async function run() {
       }
     });
 
+//Get rooms for host
+app.get('/rooms/:email',async(req,res)=>{
+   try {
+     const result = await roomsCollection.find({
+       "host.email": req.params.email
+     }).toArray();
+     res.send(result);
+   } catch (err) {
+     console.log(err);
+     res.send(err.message);
+   }
+})
+
     //post new room
-    app.post("/rooms", async (req, res) => {
+    app.post("/rooms", verifyToken, async (req, res) => {
       const newRoom = req.body;
       try {
         const result = await roomsCollection.insertOne(newRoom);
