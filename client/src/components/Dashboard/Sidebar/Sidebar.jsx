@@ -11,9 +11,9 @@ import { BsFillHouseAddFill, BsGraphUp } from "react-icons/bs";
 import { MdOutlineHomeWork } from "react-icons/md";
 import useAuth from "../../../hooks/useAuth";
 import useRole from "../../../hooks/useRole";
-import GuestMenu from "./GestMenu";
-import HostMenu from "./HostMenu";
-import AdminMenu from "./AdminMenu";
+import GuestMenu from "../Menu/GestMenu";
+import HostMenu from "../Menu/HostMenu";
+import AdminMenu from "../Menu/AdminMenu";
 
 const Sidebar = () => {
   const { logOut } = useAuth();
@@ -62,10 +62,7 @@ const Sidebar = () => {
           {/* Nav Items */}
           <div className="flex flex-col justify-between flex-1 mt-6">
             {/* If a user is host */}
-            {
-              role === 'host' && 
-              <ToggleBtn toggleHandler={toggleHandler} />
-            }
+            {role === "host" && <ToggleBtn toggleHandler={toggleHandler} />}
             <nav>
               <MenuItem
                 icon={BsGraphUp}
@@ -74,7 +71,7 @@ const Sidebar = () => {
               />
 
               {/* Menu Items */}
-              {role == "gust" && <GuestMenu />}
+              {role == "guest" && <GuestMenu />}
               {role == "host" && toggle && <HostMenu />}
               {role == "admin" && <AdminMenu />}
             </nav>
@@ -84,11 +81,7 @@ const Sidebar = () => {
         <div>
           <hr />
 
-          <MenuItem
-            icon={FcSettings}
-            label="Profile"
-            address="profile"
-          />
+          <MenuItem icon={FcSettings} label="Profile" address="profile" />
           <button
             onClick={logOut}
             className="flex w-full items-center px-4 py-2 mt-5 text-gray-600 hover:bg-gray-300   hover:text-gray-700 transition-colors duration-300 transform"

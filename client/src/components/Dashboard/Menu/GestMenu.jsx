@@ -1,4 +1,4 @@
-import MenuItem from "./MenuItem";
+import MenuItem from "../Sidebar/MenuItem";
 import { BsFingerprint } from "react-icons/bs";
 
 const GuestMenu = () => {
