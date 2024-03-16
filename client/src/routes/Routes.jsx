@@ -16,6 +16,7 @@ import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 import Profile from "../pages/Dashboard/Common/Profile";
 import MyBookings from "../pages/Dashboard/Guest/MyBookings";
 import ManageBookings from "../pages/Dashboard/Host/ManageBookings";
+import Statistics from "../pages/Dashboard/Common/Statistics";
 
 export const router = createBrowserRouter([
   {
@@ -48,6 +49,10 @@ export const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
+      {
+        index:true,
+        element:<Statistics/>
+      },
       {
         path: "add-room",
         element: (
