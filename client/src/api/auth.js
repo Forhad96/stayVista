@@ -30,3 +30,30 @@ export const getRole = async (email) => {
   const { data } = await axiosSecure(`/user/${email}`);
   return data.role;
 };
+
+//Get all user
+export const getAllUsers = async () => {
+  const { data } = await axiosSecure("/users");
+  return data;
+};
+
+//update role
+export const updateRole = async ({ email, role }) => {
+  const currentUser = {
+    email,
+    role,
+    status: "Verified",
+  };
+  const { data } = await axiosSecure.put(`/users/update/${email}`, currentUser);
+  return data;
+};
+
+// become a host
+export const becomeHost = async (email) => {
+  const currentUser = {
+    email,
+    status: "Requested",
+  };
+  const { data } = await axiosSecure.put(`/users/${email}`, currentUser);
+  return data;
+};
