@@ -47,9 +47,33 @@ async function run() {
     const usersCollection = client.db("stayVistaDB").collection("users");
     const roomsCollection = client.db("stayVistaDB").collection("rooms");
     const bookingsCollection = client.db("stayVistaDB").collection("bookings");
+
+    // Role verification middlewares
+    // For admins
+    const verifyAdmin = async (req, res, next) => {
+      const user = req.user;
+      console.log("user from verify admin", user);
+      const query = { email: user?.email };
+      const result = await usersCollection.findOne(query);
+      if (!result || result?.role !== "admin")
+        return res.status(401).send({ message: "unauthorized access" });
+      next();
+    };
+
+    // For hosts
+    const verifyHost = async (req, res, next) => {
+      const user = req.user;
+      const query = { email: user?.email };
+      const result = await usersCollection.findOne(query);
+      if (!result || result?.role !== "host")
+        return res.status(401).send({ message: "unauthorized access" });
+      next();
+    };
+
     // auth related api
     app.post("/jwt", async (req, res) => {
       const user = req.body;
+
       console.log("I need a new jwt", user);
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "365d",
@@ -166,7 +190,7 @@ async function run() {
       res.send(result);
     });
     // Get all bookings for host
-    app.get("/bookings/host", verifyToken, async (req, res) => {
+    app.get("/bookings/host", verifyToken,verifyHost, async (req, res) => {
       const email = req.query.email;
       if (!email) return res.send([]);
       const query = { host: email };
@@ -210,45 +234,45 @@ async function run() {
     });
 
     // Save or modify user email, status in DB
-     app.put("/users/:email", async (req, res) => {
-       const email = req.params.email;
-       const user = req.body;
-       const query = { email: email };
-       const options = { upsert: true };
-       const isExist = await usersCollection.findOne(query);
-       console.log("User found?----->", isExist);
-       if (isExist) {
-         if (user?.status === "Requested") {
-           const result = await usersCollection.updateOne(
-             query,
-             {
-               $set: user,
-             },
-             options
-           );
-           return res.send(result);
-         } else {
-           return res.send(isExist);
-         }
-       }
-       const result = await usersCollection.updateOne(
-         query,
-         {
-           $set: { ...user, timestamp: Date.now() },
-         },
-         options
-       );
-       res.send(result);
-     });
+    app.put("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const query = { email: email };
+      const options = { upsert: true };
+      const isExist = await usersCollection.findOne(query);
+      console.log("User found?----->", isExist);
+      if (isExist) {
+        if (user?.status === "Requested") {
+          const result = await usersCollection.updateOne(
+            query,
+            {
+              $set: user,
+            },
+            options
+          );
+          return res.send(result);
+        } else {
+          return res.send(isExist);
+        }
+      }
+      const result = await usersCollection.updateOne(
+        query,
+        {
+          $set: { ...user, timestamp: Date.now() },
+        },
+        options
+      );
+      res.send(result);
+    });
 
     //Get all users
-    app.get("/users", async (req, res) => {
+    app.get("/users",verifyToken,verifyAdmin, async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
 
     // Update user role
-    app.put("/users/update/:email", verifyToken, async (req, res) => {
+    app.put("/users/update/:email", verifyToken,verifyAdmin, async (req, res) => {
       const email = req.params.email;
       const user = req.body;
       const query = { email: email };
